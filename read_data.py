@@ -3,21 +3,30 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
 import streamlit as st
+import os
 most_bought_stocks = ["TSLA", "AMZN", "MSFT", "META", "NVDA", "GOOGL", "NIO", "AMD", "DIS"]
 most_bought_stocks_string = "tsla amzn msft meta nvda goog nio amd dis"
 
 
-
 stock_data = yf.download("aapl tsla amzn msft meta nvda goog nio amd dis", start="2022-01-01", end="2022-12-31")
-
 volume = stock_data["Volume"]
 adj_close = stock_data["Adj Close"]
 
 
-economic_calendar = pd.read_csv("/Users/davidkorn/Data Science/project/data/economic_calendar.csv")
-dji = pd.read_csv("/Users/davidkorn/Data Science/project/data/^DJI.csv")
-sp500 = pd.read_csv("/Users/davidkorn/Data Science/project/data/^GSPC.csv")
-nasdaq = pd.read_csv("/Users/davidkorn/Data Science/project/data/^IXIC.csv")
+
+data_folder = "data"
+
+
+economic_calendar_path = os.path.join(data_folder, "economic_calendar.csv")
+dji_path = os.path.join(data_folder, "^DJI.csv")
+sp500_path = os.path.join(data_folder, "^GSPC.csv")
+nasdaq_path = os.path.join(data_folder, "^IXIC.csv")
+
+economic_calendar = pd.read_csv(economic_calendar_path)
+dji = pd.read_csv(dji_path)
+sp500 = pd.read_csv(sp500_path)
+nasdaq = pd.read_csv(nasdaq_path)
+
 dji["Date"] = pd.to_datetime(dji["date"])
 sp500["Date"] = pd.to_datetime(sp500["date"])
 nasdaq["Date"] = pd.to_datetime(nasdaq["date"])
