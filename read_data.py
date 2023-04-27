@@ -86,3 +86,4 @@ cpi_daily_scaled['CPI'] = cpi_daily_scaled['CPI'] * 100  # Multiply all values i
 
 cpi_monthly_scaled = cpi_monthly.copy()  # Create a copy of the cpi_daily DataFrame
 cpi_monthly_scaled['CPI'] = cpi_monthly_scaled['CPI'] * 100  # Multiply all values in the CPI column by 100
+

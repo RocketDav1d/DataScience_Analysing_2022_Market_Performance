@@ -16,3 +16,4 @@ gdp_growth_rate = economic_calendar.query('Event == "GDP"')
 display_gdp_economic_calender = gdp_growth_rate.filter(columns_to_display)
 # Reset index and remove the index name
 display_gdp_economic_calender.reset_index(drop=True, inplace=True)
+
