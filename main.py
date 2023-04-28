@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 from datetime import datetime
 from read_data import volume, adj_close, economic_calendar, dji, sp500, nasdaq, stock_data, cpi_daily, cpi_monthly, cpi_daily_scaled, cpi_monthly_scaled, adj_close_reset
 import plotly.graph_objs as go
@@ -196,9 +197,7 @@ with tab1:
         st.write("If the points in the scatter plot are tightly clustered around a straight line, it indicates that the stock's movement is highly correlated with the index.")
 
 
-  import numpy as np
-
-
+  
 
   if len(selected_indices) == 1 and len(selected_stocks) == 1:
       selected_index = selected_indices[0]
@@ -220,6 +219,58 @@ with tab1:
 # ---------------------------- Tab 2 - interest rates ----------------------------
 
 # Fed Interest Rate Decision events in the Economic Calendar
+def plot_index_chart_with_events(index_data_dict, selected_indices, event_dates):
+    fig = go.Figure()
+
+    for index_name in selected_indices:
+        data = index_data_dict[index_name]
+        fig.add_trace(go.Scatter(x=data["date"], y=data["Adj Close"], name=index_name, mode="lines"))
+
+        # Add markers for interest rate decision dates
+        event_y = data[data["date"].isin(event_dates)]["Adj Close"]
+        fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="Interest Rate Decision"))
+
+    fig.update_layout(title='Market Performance of Major Indices with Interest Rate Decision Dates',
+                      xaxis_title='Date',
+                      yaxis_title='Adjusted Close Price',
+                      legend_title='Indices')
+    return fig
+
+
+def plot_volume_chart_with_events_interest_rate(volume_data, selected_stocks, event_dates):
+    fig = go.Figure()
+
+    for column in selected_stocks:
+        fig.add_trace(go.Scatter(x=volume_data.index, y=volume_data[column], name=column, mode='lines'))
+
+        # Add markers for interest rate decision dates
+        event_y = volume_data[volume_data.index.isin(event_dates)][column]
+        fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="Interest Rate Decision"))
+
+    fig.update_layout(title='Stock Volume Over Time with Interest Rate Decision Dates',
+                      xaxis_title='Date',
+                      yaxis_title='Volume',
+                      legend_title='Stocks')
+    return fig
+
+
+def plot_adj_chart_with_events_interest_rate(adj_close_data, selected_stocks, event_dates):
+    fig = go.Figure()
+
+    for column in selected_stocks:
+        fig.add_trace(go.Scatter(x=adj_close_data.index, y=adj_close_data[column], name=column, mode='lines'))
+
+        # Add markers for interest rate decision dates
+        event_y = adj_close_data[adj_close_data.index.isin(event_dates)][column]
+        fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="Interest Rate Decision"))
+
+    fig.update_layout(title='Stock Adj Close Over Time with Interest Rate Decision Dates',
+                      xaxis_title='Date',
+                      yaxis_title='Adj Close',
+                      legend_title='Stocks')
+    return fig
+
+
 
 with tab2:
   col3, col4 = st.columns(2)
@@ -246,60 +297,9 @@ with tab2:
 
   st.subheader("Do the interest rate decisions have an impact on the stock market?")
 
-  # Step 1: Extract the dates from the display_economic_calender DataFrame
+  # Extract the dates from the display_economic_calender DataFrame
   interest_rate_dates = display_interest_rates_economic_calender['Date'].tolist()
 
-  # Step 2: Modify the plot_index_chart and plot_volume_chart functions
-  def plot_index_chart_with_events(index_data_dict, selected_indices, event_dates):
-      fig = go.Figure()
-
-      for index_name in selected_indices:
-          data = index_data_dict[index_name]
-          fig.add_trace(go.Scatter(x=data["date"], y=data["Adj Close"], name=index_name, mode="lines"))
-
-          # Add markers for interest rate decision dates
-          event_y = data[data["date"].isin(event_dates)]["Adj Close"]
-          fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="Interest Rate Decision"))
-
-      fig.update_layout(title='Market Performance of Major Indices with Interest Rate Decision Dates',
-                        xaxis_title='Date',
-                        yaxis_title='Adjusted Close Price',
-                        legend_title='Indices')
-      return fig
-
-
-  def plot_volume_chart_with_events_interest_rate(volume_data, selected_stocks, event_dates):
-      fig = go.Figure()
-
-      for column in selected_stocks:
-          fig.add_trace(go.Scatter(x=volume_data.index, y=volume_data[column], name=column, mode='lines'))
-
-          # Add markers for interest rate decision dates
-          event_y = volume_data[volume_data.index.isin(event_dates)][column]
-          fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="Interest Rate Decision"))
-
-      fig.update_layout(title='Stock Volume Over Time with Interest Rate Decision Dates',
-                        xaxis_title='Date',
-                        yaxis_title='Volume',
-                        legend_title='Stocks')
-      return fig
-  
-
-  def plot_adj_chart_with_events_interest_rate(adj_close_data, selected_stocks, event_dates):
-      fig = go.Figure()
-
-      for column in selected_stocks:
-          fig.add_trace(go.Scatter(x=adj_close_data.index, y=adj_close_data[column], name=column, mode='lines'))
-
-          # Add markers for interest rate decision dates
-          event_y = adj_close_data[adj_close_data.index.isin(event_dates)][column]
-          fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="Interest Rate Decision"))
-
-      fig.update_layout(title='Stock Adj Close Over Time with Interest Rate Decision Dates',
-                        xaxis_title='Date',
-                        yaxis_title='Adj Close',
-                        legend_title='Stocks')
-      return fig
 
   # Create columns to display modified plots side by side
   col5, col6 = st.columns(2)
@@ -320,7 +320,6 @@ with tab2:
         st.plotly_chart(volume_chart_with_events_interest_rates)
          
 
-
   st.divider()
   st.subheader("Topic Conclusion")
   st.markdown("While there is no immediate connection between the reports of the interest rate decisions by the Fed and the stock market, we can see that the stock market performance troughout the year correlates with the interest rate decisions.")
@@ -336,6 +335,60 @@ with tab2:
 # ---------------------------- Tab 3 - GDP Growth Rate ----------------------------
 
 # GDP Growth Rate events in the Economic Calendar
+def plot_index_chart_with_events(index_data_dict, selected_indices, event_dates):
+    fig = go.Figure()
+
+    for index_name in selected_indices:
+        data = index_data_dict[index_name]
+        fig.add_trace(go.Scatter(x=data["date"], y=data["Adj Close"], name=index_name, mode="lines"))
+
+        
+        event_y = data[data["date"].isin(event_dates)]["Adj Close"]
+        fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="GDP Growth Report"))
+
+    fig.update_layout(title='Market Performance of Major Indices with GDP Growth Rate reports',
+                      xaxis_title='Date',
+                      yaxis_title='Adjusted Close Price',
+                      legend_title='Indices')
+
+    return fig
+
+
+def plot_volume_chart_with_events_gdp(volume_data, selected_stocks, event_dates):
+    fig = go.Figure()
+
+    for column in selected_stocks:
+        fig.add_trace(go.Scatter(x=volume_data.index, y=volume_data[column], name=column, mode='lines'))
+
+
+        event_y = volume_data[volume_data.index.isin(event_dates)][column]
+        fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="GDP Growth Report"))
+
+    fig.update_layout(title='Stock Volume Over Time with GDP growth rate reports',
+                      xaxis_title='Date',
+                      yaxis_title='Volume',
+                      legend_title='Stocks')
+
+    return fig
+
+def plot_adj_close_chart_with_events_gdp(adj_close, selected_stocks, event_dates):
+  fig = go.Figure()
+
+  for column in selected_stocks:
+      fig.add_trace(go.Scatter(x=adj_close.index, y=adj_close[column], name=column, mode='lines'))
+
+
+      event_y = adj_close[adj_close.index.isin(event_dates)][column]
+      fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="GDP Growth Report"))
+
+  fig.update_layout(title='Stock Adj Close Over Time with GDP growth rate reports ',
+                    xaxis_title='Date',
+                    yaxis_title='Adj Close',
+                    legend_title='Stocks')
+
+  return fig
+
+
 
 with tab3:
   col11, col12 = st.columns(2)
@@ -360,68 +413,8 @@ with tab3:
       gdp_chart = plot_gdp_rate_chart(display_gdp_economic_calender)
       st.plotly_chart(gdp_chart)
 
-
   st.subheader("Does the GDP growth show an impact on the stock market?")
- 
   gdp_dates = display_gdp_economic_calender['Date'].tolist()
-
-
-  def plot_index_chart_with_events(index_data_dict, selected_indices, event_dates):
-      fig = go.Figure()
-
-      for index_name in selected_indices:
-          data = index_data_dict[index_name]
-          fig.add_trace(go.Scatter(x=data["date"], y=data["Adj Close"], name=index_name, mode="lines"))
-
-          
-          event_y = data[data["date"].isin(event_dates)]["Adj Close"]
-          fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="GDP Growth Report"))
-
-      fig.update_layout(title='Market Performance of Major Indices with GDP Growth Rate reports',
-                        xaxis_title='Date',
-                        yaxis_title='Adjusted Close Price',
-                        legend_title='Indices')
-
-      return fig
-
-
-  def plot_volume_chart_with_events_gdp(volume_data, selected_stocks, event_dates):
-      fig = go.Figure()
-
-      for column in selected_stocks:
-          fig.add_trace(go.Scatter(x=volume_data.index, y=volume_data[column], name=column, mode='lines'))
-
-
-          event_y = volume_data[volume_data.index.isin(event_dates)][column]
-          fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="GDP Growth Report"))
-
-      fig.update_layout(title='Stock Volume Over Time with GDP growth rate reports',
-                        xaxis_title='Date',
-                        yaxis_title='Volume',
-                        legend_title='Stocks')
-
-      return fig
-  
-  def plot_adj_close_chart_with_events_gdp(adj_close, selected_stocks, event_dates):
-    fig = go.Figure()
-
-    for column in selected_stocks:
-        fig.add_trace(go.Scatter(x=adj_close.index, y=adj_close[column], name=column, mode='lines'))
-
-
-        event_y = adj_close[adj_close.index.isin(event_dates)][column]
-        fig.add_trace(go.Scatter(x=event_dates, y=event_y, mode="markers", marker=dict(color="black", size=6), name="GDP Growth Report"))
-
-    fig.update_layout(title='Stock Adj Close Over Time with GDP growth rate reports ',
-                      xaxis_title='Date',
-                      yaxis_title='Adj Close',
-                      legend_title='Stocks')
-
-    return fig
-  
-
-
-
 
   # Create columns to display modified plots side by side
   col7, col8 = st.columns(2)
@@ -450,39 +443,10 @@ with tab3:
   st.markdown("The costly pandemic recovery as well as the Russia/Ucraine war, contributed to the shrinking GDP")
 
 
+
+
+
 # ---------------------------- CPI / inflation ----------------------------
-
-
-
-with tab4: 
-  col9, col10 = st.columns(2)
-
-  with col9:
-    st.subheader("monthly inflation measeured by CPI")
-    st.dataframe(cpi_monthly)
-
-  with col10:
-      def plot_daily_cpi_line_chart(daily_cpi_data, montly_cpi_data):
-        fig = go.Figure()
-
-        fig.add_trace(go.Scatter(x=daily_cpi_data.index, y=daily_cpi_data["CPI"], mode="lines", name="Daily CPI"))
-        fig.add_trace(go.Scatter(x=montly_cpi_data.index, y=montly_cpi_data["CPI"], mode="markers", marker=dict(size=8), name="Monthly CPI"))
-
-        fig.add_trace(go.Scatter(x=daily_cpi_data.index,
-                              y=[2] * len(daily_cpi_data),
-                              mode='lines',
-                              name='Desired CPI',
-                              line=dict(color='rgba(255, 0, 0, 0.5)', width=2)))
-
-        fig.update_layout(title="US CPI Daily Growth (Interpolated)", xaxis_title="Date", yaxis_title="CPI")
-
-        return fig
-      
-      daily_cpi_line_chart = plot_daily_cpi_line_chart(cpi_daily_scaled, cpi_monthly_scaled)
-      st.plotly_chart(daily_cpi_line_chart)
-
-
-  col15, col16 = st.columns(2)
 
   def plot_index_chart_with_events_inflation(index_data_dict, selected_indices):
       fig = go.Figure()
@@ -495,7 +459,6 @@ with tab4:
                         xaxis_title='Date',
                         yaxis_title='Adjusted Close Price',
                         legend_title='Indices')
-
       return fig
 
   def plot_volume_chart_with_events_inflation(volume_data, selected_stocks):
@@ -509,7 +472,6 @@ with tab4:
                         xaxis_title='Date',
                         yaxis_title='Volume',
                         legend_title='Stocks')
-
       return fig
   
   def plot_adj_close_chart_with_events_inflation(adj_close, selected_stocks):
@@ -522,25 +484,55 @@ with tab4:
                       xaxis_title='Date',
                       yaxis_title='Adj Close',
                       legend_title='Stocks')
-
     return fig
+  
 
-  with col15:
-    # Display the modified index chart
-    index_chart_with_events = plot_index_chart_with_events_inflation(index_dict, selected_indices)
-    st.plotly_chart(index_chart_with_events)
+  with tab4: 
+    col9, col10 = st.columns(2)
 
-  with col16:
-    g, h = st.tabs(["Adj Close", "Volume"])
-    with g:
-      adj_close_chart = plot_adj_close_chart_with_events_inflation(adj_close, selected_stocks)
-      st.plotly_chart(adj_close_chart)
-    with h:
-      # Display the modified volume chart
-      volume_chart = plot_volume_chart_with_events_inflation(volume, selected_stocks)
-      st.plotly_chart(volume_chart)
+    with col9:
+      st.subheader("monthly inflation measeured by CPI")
+      st.dataframe(cpi_monthly)
+
+    with col10:
+        def plot_daily_cpi_line_chart(daily_cpi_data, montly_cpi_data):
+          fig = go.Figure()
+
+          fig.add_trace(go.Scatter(x=daily_cpi_data.index, y=daily_cpi_data["CPI"], mode="lines", name="Daily CPI"))
+          fig.add_trace(go.Scatter(x=montly_cpi_data.index, y=montly_cpi_data["CPI"], mode="markers", marker=dict(size=8), name="Monthly CPI"))
+
+          fig.add_trace(go.Scatter(x=daily_cpi_data.index,
+                                y=[2] * len(daily_cpi_data),
+                                mode='lines',
+                                name='Desired CPI',
+                                line=dict(color='rgba(255, 0, 0, 0.5)', width=2)))
+
+          fig.update_layout(title="US CPI Daily Growth (Interpolated)", xaxis_title="Date", yaxis_title="CPI")
+
+          return fig
+        
+        daily_cpi_line_chart = plot_daily_cpi_line_chart(cpi_daily_scaled, cpi_monthly_scaled)
+        st.plotly_chart(daily_cpi_line_chart)
 
 
+    col15, col16 = st.columns(2)
+
+    with col15:
+      # Display the modified index chart
+      index_chart_with_events = plot_index_chart_with_events_inflation(index_dict, selected_indices)
+      st.plotly_chart(index_chart_with_events)
+
+    with col16:
+      g, h = st.tabs(["Adj Close", "Volume"])
+      with g:
+        adj_close_chart = plot_adj_close_chart_with_events_inflation(adj_close, selected_stocks)
+        st.plotly_chart(adj_close_chart)
+      with h:
+        # Display the modified volume chart
+        volume_chart = plot_volume_chart_with_events_inflation(volume, selected_stocks)
+        st.plotly_chart(volume_chart)
+
+  
   st.divider()
   st.subheader("Topic Conclusion")
   st.markdown("The inflation rates go into the year 2022, already at a high level. A desired inflation rate of 2% is not in reach.")
@@ -549,6 +541,11 @@ with tab4:
   st.markdown("The rise of the inflation levels is a result of the pandemic recovery and the Russia/Ucraine war.")
   st.markdown("This behavior correlates with the rising GDP and fall of index and stocks prices")
 
+
+
+
+
+# ---------------------------- General Conclusion ----------------------------
 
 st.divider()
 st.subheader("General Conclusion")
