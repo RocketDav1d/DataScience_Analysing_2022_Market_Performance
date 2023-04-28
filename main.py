@@ -323,8 +323,8 @@ with tab2:
   st.divider()
   st.subheader("Topic Conclusion")
   st.markdown("While there is no immediate connection between the reports of the interest rate decisions by the Fed and the stock market, we can see that the stock market performance troughout the year correlates with the interest rate decisions.")
-  st.markdown("If interest rates move higher, stock investors become more reluctant to bid up stock prices because the value of future earnings looks less attractive versus bonds that pay more competitive yields today")
-  st.markdown("Present value calculations of future earnings for stocks are tied to assumptions about interest rates or inflation. If investors anticipate higher rates in the future, it reduces the present value of future earnings for stocks. When this occurs, stock prices tend to face more pressure")
+  st.markdown("If interest rates move higher, stock investors become more reluctant to bid up stock prices because the value of future earnings looks less attractive versus bonds that pay more competitive yields today.")
+  st.markdown("Present value calculations of future earnings for stocks are tied to assumptions about interest rates or inflation. If investors anticipate higher rates in the future, it reduces the present value of future earnings for stocks. When this occurs, stock prices tend to face more pressure.")
   st.markdown("The hardest hit stocks have primarily been those that are considerer 'pricey' from a valuation perspective, This included secular growth and technology companies that enjoyed extremely strong performance since the pandemic began.")
   st.markdown("The overall downward trend of the major market indeces and the top ten most bought stocks (which are mostly tech stocks) correlates with the decisions to rise the interest rates.")
 
@@ -440,7 +440,7 @@ with tab3:
   st.markdown("Again there is no instant correlation between the report dates of the GDP dates and the stocks performance")
   st.markdown("However this was already expected as the GDP growth rate is a long term indicator and not a short term one.")
   st.markdown("It is interesting to oberseve the correlation between the rapid fall of the GDP in April 2022 and the plummiting of indeces and stocks in the same period.")
-  st.markdown("The costly pandemic recovery as well as the Russia/Ucraine war, contributed to the shrinking GDP")
+  st.markdown("The costly pandemic recovery as well as the Russia/Ucraine war, contributed to the shrinking GDP.")
 
 
 
@@ -537,9 +537,9 @@ with tab3:
   st.subheader("Topic Conclusion")
   st.markdown("The inflation rates go into the year 2022, already at a high level. A desired inflation rate of 2% is not in reach.")
   st.markdown("Beginning of February the rise above the the 8% mark occurs - where it stays until mid september.")
-  st.markdown("The inflation levels peak in June 2022 reaching 9%")
+  st.markdown("The inflation levels peak in June 2022 reaching 9%.")
   st.markdown("The rise of the inflation levels is a result of the pandemic recovery and the Russia/Ucraine war.")
-  st.markdown("This behavior correlates with the rising GDP and fall of index and stocks prices")
+  st.markdown("This behavior correlates with the rising GDP and fall of index and stocks prices.")
 
 
 
