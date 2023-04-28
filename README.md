@@ -5,6 +5,6 @@
 1. git clone this branch
 2. create a virtual environment with `python -m venv venv`
 3. install all dependencies with `pip install -r requirements.txt`
-4. to run locally use `streamlit run main.py
+4. to run locally use `streamlit run main.py`
 5. to deploy with streamlit, deploy to Github, signUp on streamlit.io and deploy on the main branch of your repo
 
